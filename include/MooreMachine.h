@@ -38,7 +38,8 @@ public:
 
         if (outputFunctions.find(outputName) == outputFunctions.end())
         {
-            throw "Función de salida no registrada: " + outputName;
+            std::cout << "Función de salida no registrada: " + outputName << std::endl;
+            return;
         }
         states.push_back({name, outputFunctions[outputName], {}});
     }
@@ -59,7 +60,7 @@ public:
     }
 
     // Agregar una transición, si input es null se vuelve una transicion lambda
-    void addTransition(const std::string &fromState, const std::string &input, const std::string &toState )
+    void addTransition(const std::string &fromState, const std::string &input, const std::string &toState)
     {
         int fromIndex = -1, toIndex = -1;
 
@@ -74,6 +75,7 @@ public:
         {
             // throw std::exception("Estados no encontrados para la transición");
             std::cout << "Estados no encontrados para la transición" << std::endl;
+            return;
         }
         else
         {
@@ -96,7 +98,11 @@ public:
     {
         std::cout << "----Reiniciando máquina----" << std::endl;
         if (initialState == -1)
+        {
             std::cout << "Estado inicial no establecido";
+            return;
+        }
+
         currentState = initialState;
 
         if (showInputsOutputs)
@@ -117,13 +123,18 @@ public:
     void processInput(const std::string &input, bool executeStateOutput = true)
     {
         if (currentState == -1)
-            throw "La máquina no está inicializada";
+        {
+            std::cout << "La máquina no está inicializada" << std::endl;
+            return;
+        }
 
         auto it = states[currentState].transitions.find(input);
         if (it != states[currentState].transitions.end())
         {
-            currentState = it->second;
+            // Mostrar transicion
+            std::cout << states[currentState].name << " -- " << input << " --> " << states[it->second].name << std::endl;
 
+            currentState = it->second;
             if (executeStateOutput)
                 executeOutput();
 
@@ -133,8 +144,10 @@ public:
         else
         {
             // Ignorar error si la entrada es lambda
-            if (input != "_LAMBDA")
-                 std::cout << "Transición no encontrada para la entrada dada" << std::endl;
+            if (input != "_LAMBDA"){
+                //std::cout << "Transición no encontrada para la entrada dada" << std::endl;
+                return;
+            }
         }
     }
 
@@ -150,7 +163,10 @@ public:
     void executeOutput() const
     {
         if (currentState == -1)
-            throw "La máquina no está inicializada";
+        {
+            std::cout << "La máquina no está inicializada" << std::endl;
+            return;
+        }
 
         if (states[currentState].output != nullptr)
         {
@@ -166,7 +182,10 @@ public:
     std::string getCurrentState() const
     {
         if (currentState == -1)
-            throw "La máquina no está inicializada";
+        {
+            std::cout << "La máquina no está inicializada" << std::endl;
+            return "";
+        }
         return states[currentState].name;
     }
 };

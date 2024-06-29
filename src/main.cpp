@@ -9,6 +9,7 @@ void inicializarMaquinaMoore();
 void leerJFFSerial(); // Leer archivo JFF desde el puerto serie
 void moverServo();
 
+#define IR_PIN D2 // Pin del sensor IR
 #define FLASH_BUTTON 0 // Pin del botón
 EasyButton flashButton(FLASH_BUTTON);
 Servo servo;
@@ -16,23 +17,24 @@ Servo servo;
 MooreMachine moore;
 
 // Funciones de salida
-bool dooropening = true;
+bool abriendoBarrera = true;
+int servoAngle = 0;
 
-void prenderLed()
+void abrirBarrera()
 {
-  dooropening = false;
-  Serial.println("Led encendido");
+  abriendoBarrera = true;
+ // Serial.println("-> Abriendo barrera");
 }
 
-void apagarLed()
+void cerrarBarrera()
 {
-  dooropening = true;
-  Serial.println("Led apagado");
+  abriendoBarrera = false;
+ // Serial.println("-> Cerrando barrera");
 }
 
 void idle()
 {
-  Serial.println("Esperar");
+  Serial.println("-> Esperar");
 }
 
 void setup()
@@ -40,42 +42,66 @@ void setup()
   inicializarHardware();
   inicializarMaquinaMoore();
 }
-
-int servoAngle = 0;
-
+ 
 void loop()
 {
+  leerJFFSerial();
+
   flashButton.read();
- leerJFFSerial();
+
+  bool ir = digitalRead(IR_PIN);
+  if (!ir) //active low
+  {
+    moore.processInput("barrObst");
+  }else{
+    moore.processInput("barrLibre");
+  }
+
   moverServo();
   delay(10);
 }
 
 void inicializarMaquinaMoore()
 {
+  /*Entradas (transiciones):
+bot (Boton pulsado)
+barrObst (Sensor de barrera obstruido)
+barrLibre (Sensor de barrera libre)
+sAbi (Sensor barrera abierta)
+sCer (Sensor barrera cerrada)
+
+Salidas:
+idle (No hacer nada)
+abr (Abrir barrera)
+cer (Cerrar barrera)
+lr1 (Encender led rojo)
+lr0 (Apagar led rojo)
+lv1 (Encender led verde)
+lv0 (Apagar led verde)*/
+
   // Registrar funciones para cada simbolo de salida
   // (𝛤 → función)
-  moore.addOutput("led_on", prenderLed);
-  moore.addOutput("led_off", apagarLed);
+  moore.addOutput("abr", abrirBarrera);
+  moore.addOutput("cer", cerrarBarrera);
   moore.addOutput("idle", idle);
 
   // Agregar estados y su simbolo de salida
   // Q, ℎ:𝑄 → 𝛤
-  moore.addState("q0", "led_off");
+  moore.addState("q0", "cer");
   moore.addState("q1", "idle");
-  moore.addState("q2", "led_on");
+  moore.addState("q2", "abr");
 
   // Estado inicial q0
   moore.setInitialState("q0");
 
   // Agregar transiciones
-  moore.addTransition("q0", "boton", "q1");
-  moore.addTransition("q1", "boton", "q2");
-  moore.addTransition("q2", "boton", "q0");
+  moore.addTransition("q0", "bot", "q1");
+  moore.addTransition("q1", "bot", "q2");
+  moore.addTransition("q2", "bot", "q0");
 
   // 
   flashButton.onPressed([]() { // Callback al presionarse el boton
-    moore.processInput("boton");
+    moore.processInput("bot");
   });
 
   moore.reset();
@@ -113,24 +139,27 @@ void leerJFFSerial()
 
 void moverServo()
 {
-  if (dooropening)
+  if (abriendoBarrera)
   {
-    servoAngle++;
+    servoAngle--;
   }
   else
   {
-    servoAngle--;
+    servoAngle++;
   }
 
   if (servoAngle <= 0)
   {
-    //Serial.println("Cerrado");
+    //Serial.println("Abierto");
+   
+    moore.processInput("sAbi");
     servoAngle = 0;
   }
 
   if (servoAngle >= 180)
   {
-    //Serial.println("Abierto");
+     //Serial.println("Cerrado");
+    moore.processInput("sCer");
     servoAngle = 180;
   }
 
@@ -143,5 +172,8 @@ void inicializarHardware()
   // Configurar servo
   servo.attach(D4);
   servo.write(0);
+  // Configurar sensor de barrera
+  pinMode(IR_PIN, INPUT);
+
   flashButton.begin(); // Inicializa el botón
 }
