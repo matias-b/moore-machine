@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--Created with JFLAP 7.1.--><structure>
+	<type>moore</type>
+	<automaton>
+		<!--The list of states.-->
+		<state id="0" name="abriendo">
+			<x>234.0</x>
+			<y>376.0</y>
+			<label>abriendo</label>
+			<output>abr</output>
+		</state>
+		<state id="1" name="abierto">
+			<x>298.0</x>
+			<y>254.0</y>
+			<label>abierto</label>
+			<output>verde</output>
+		</state>
+		<state id="2" name="cerrando">
+			<x>555.0</x>
+			<y>429.0</y>
+			<label>cerrando</label>
+			<output>cer</output>
+		</state>
+		<state id="3" name="cerrado">
+			<x>396.0</x>
+			<y>517.0</y>
+			<label>cerrado</label>
+			<output>idle</output>
+		</state>
+		<state id="4" name="q0">
+			<x>135.0</x>
+			<y>375.0</y>
+			<initial/>
+			<output>rojo</output>
+		</state>
+		<state id="5" name="q5">
+			<x>473.0</x>
+			<y>267.0</y>
+			<output>ledOff</output>
+		</state>
+		<state id="6" name="q6">
+			<x>541.0</x>
+			<y>322.0</y>
+			<output>rojo</output>
+		</state>
+		<!--The list of transitions.-->
+		<transition>
+			<from>5</from>
+			<to>6</to>
+			<read>_out</read>
+			<transout>rojo</transout>
+		</transition>
+		<transition>
+			<from>3</from>
+			<to>0</to>
+			<read>bot</read>
+			<transout>abr</transout>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>3</to>
+			<read>sCer</read>
+			<transout>idle</transout>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>5</to>
+			<read>bot</read>
+			<transout>ledOff</transout>
+		</transition>
+		<transition>
+			<from>6</from>
+			<to>2</to>
+			<read>_out</read>
+			<transout>cer</transout>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>5</to>
+			<read>bot</read>
+			<transout>ledOff</transout>
+		</transition>
+		<transition>
+			<from>4</from>
+			<to>0</to>
+			<read>_out</read>
+			<transout>abr</transout>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>0</to>
+			<read>barrObst</read>
+			<transout>abr</transout>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>0</to>
+			<read>bot</read>
+			<transout>abr</transout>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>1</to>
+			<read>sAbi</read>
+			<transout>verde</transout>
+		</transition>
+		<note>
+			<text>  Entradas (transiciones):
+    _out (Disparada despues de cada estado)
+    bot (Boton pulsado)
+    barrObst (Sensor de barrera obstruido)
+    barrLibre (Sensor de barrera libre)
+    sAbi (Sensor barrera abierta)
+    sCer (Sensor barrera cerrada)
+
+  Salidas:
+    idle (No hacer nada)
+    abr (Abrir barrera)
+    cer (Cerrar barrera)
+    rojo (Encender luz roja)
+    amarillo (Encender luz amarilla)
+    verde (Encender luz verde)
+    ledOff (Apagar leds)</text>
+			<x>703.0</x>
+			<y>299.0</y>
+		</note>
+	</automaton>
+</structure>

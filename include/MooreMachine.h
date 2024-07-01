@@ -32,7 +32,7 @@ public:
         outputFunctions[outputName] = outputFunction;
     }
 
-    // Agregar un estado a Q y su simbolo de salida ℎ:𝑄 → 𝛤
+    // Agregar un estado a Q y su simbolo de salida, ℎ:𝑄 → 𝛤
     void addState(const std::string &name, const std::string &outputName)
     {
 
@@ -59,7 +59,7 @@ public:
         throw "Estado inicial no encontrado";
     }
 
-    // Agregar una transición, si input es null se vuelve una transicion lambda
+    // Agregar una transición
     void addTransition(const std::string &fromState, const std::string &input, const std::string &toState)
     {
         int fromIndex = -1, toIndex = -1;
@@ -79,15 +79,15 @@ public:
         }
         else
         {
-            // Contemplar transiciones lambda
+            // Si la entrada es vacia, se asume que es tipo OUT
             if (input.empty())
             {
-                std::cout << states[fromIndex].name << " -- LAMBDA -->" << states[toIndex].name << std::endl;
-                states[fromIndex].transitions["_LAMBDA"] = toIndex;
+                std::cout << states[fromIndex].name << " -- _out -->" << states[toIndex].name << std::endl;
+                states[fromIndex].transitions["_out"] = toIndex;
             }
             else
             {
-                std::cout << states[fromIndex].name << " -- " << input << "-->" << states[toIndex].name << std::endl;
+                std::cout << states[fromIndex].name << " -- " << input << " -->" << states[toIndex].name << std::endl;
                 states[fromIndex].transitions[input] = toIndex;
             }
         }
@@ -114,9 +114,14 @@ public:
             {
                 std::cout << output.first << " ";
             }
+            std::cout << std::endl;
         }
+
         if (executeStateOutput)
+        {
             executeOutput();
+        } 
+        processInput("_out", executeStateOutput);
     }
 
     // Procesar una entrada
@@ -138,14 +143,15 @@ public:
             if (executeStateOutput)
                 executeOutput();
 
-            // Ejecutar transiciones lambda
-            processInput("_LAMBDA", executeStateOutput);
+            // Ejecutar transiciones OUT
+            processInput("_out", executeStateOutput);
         }
         else
         {
-            // Ignorar error si la entrada es lambda
-            if (input != "_LAMBDA"){
-                //std::cout << "Transición no encontrada para la entrada dada" << std::endl;
+            // Ignorar error si la entrada es OUT
+            if (input != "_out")
+            {
+                // std::cout << "Transición no encontrada para la entrada dada" << std::endl;
                 return;
             }
         }

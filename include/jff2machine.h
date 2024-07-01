@@ -8,6 +8,7 @@
 #include "MooreMachine.h"
 
 using namespace tinyxml2;
+// TODO unificar las funciones de carga de máquina de Moore
 
 // Función para leer el archivo .jff y configurar la máquina de Moore
 void loadMooreMachineFromJFF(const std::string &filename, MooreMachine &machine)
@@ -58,7 +59,7 @@ void loadMooreMachineFromJFF(const std::string &filename, MooreMachine &machine)
     }
 }
 
-// Función para leer el archivo .jff y configurar la máquina de Moore
+// Función para leer el archivo .jff desde un string y configurar la máquina de Moore
 void loadMooreMachineFromJFFString(const std::string &content, MooreMachine &machine)
 {
     XMLDocument doc;
@@ -110,13 +111,8 @@ void loadMooreMachineFromJFFString(const std::string &content, MooreMachine &mac
 
         XMLElement *readElement = transition->FirstChildElement("read");
         std::string read;
-
         if (readElement && readElement->GetText())
             read = readElement->GetText();
-
-        // if(read == nullptr)
-        // read = "_LAMBDA";
-        //   std::cout << "Transición: " << from << " -> " << read << " -> " << to << std::endl;
 
         machine.addTransition(stateNames[from], read, stateNames[to]);
     }

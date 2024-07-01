@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--Created with JFLAP 7.1.--><structure>
+	<type>moore</type>
+	<automaton>
+		<!--The list of states.-->
+		<state id="0" name="abriendo">
+			<x>226.0</x>
+			<y>338.0</y>
+			<label>abriendo</label>
+			<initial/>
+			<output>abr</output>
+		</state>
+		<state id="1" name="abierto">
+			<x>360.0</x>
+			<y>225.0</y>
+			<label>abierto</label>
+			<output>idle</output>
+		</state>
+		<state id="2" name="cerrando">
+			<x>490.0</x>
+			<y>344.0</y>
+			<label>cerrando</label>
+			<output>cer</output>
+		</state>
+		<state id="3" name="cerrado">
+			<x>358.0</x>
+			<y>482.0</y>
+			<label>cerrado</label>
+			<output>idle</output>
+		</state>
+		<!--The list of transitions.-->
+		<transition>
+			<from>1</from>
+			<to>2</to>
+			<read>bot</read>
+			<transout>cer</transout>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>2</to>
+			<read>bot</read>
+			<transout>cer</transout>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>0</to>
+			<read>bot</read>
+			<transout>abr</transout>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>1</to>
+			<read>sAbi</read>
+			<transout>idle</transout>
+		</transition>
+		<transition>
+			<from>3</from>
+			<to>0</to>
+			<read>bot</read>
+			<transout>abr</transout>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>3</to>
+			<read>sCer</read>
+			<transout>idle</transout>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>0</to>
+			<read>barrObst</read>
+			<transout>abr</transout>
+		</transition>
+		<note>
+			<text>Entradas (transiciones):
+bot (Boton pulsado)
+barrObst (Sensor de barrera obstruido)
+barrLibre (Sensor de barrera libre)
+sAbi (Sensor barrera abierta)
+sCer (Sensor barrera cerrada)
+
+Salidas:
+idle (No hacer nada)
+abr (Abrir barrera)
+cer (Cerrar barrera)
+rojo (Encender luz roja)
+verde (Encender luz verde)
+ledOff (Apagar leds)</text>
+			<x>415.0</x>
+			<y>2.0</y>
+		</note>
+	</automaton>
+</structure>
